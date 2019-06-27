@@ -16,16 +16,16 @@ import com.springtest.model.Circle;
 @Component
 public class JdbcDaoImpl {
 
-	private JdbcTemplate jdbcTemplate = new JdbcTemplate();
-	@Autowired
+	private JdbcTemplate jdbcTemplate;
 	private DataSource dataSource;
 
 	public DataSource getDataSource() {
 		return dataSource;
 	}
 
+	@Autowired
 	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	public Circle getCircle(int circleID) {
@@ -59,7 +59,6 @@ public class JdbcDaoImpl {
 
 	public int getCircleCount() {
 		String sql = "select count(*) from circle";
-		jdbcTemplate.setDataSource(getDataSource());
 		return jdbcTemplate.queryForObject(sql, Integer.class);
 	}
 }
