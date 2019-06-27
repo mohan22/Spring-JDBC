@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.springtest.model.Circle;
@@ -15,6 +16,7 @@ import com.springtest.model.Circle;
 @Component
 public class JdbcDaoImpl {
 
+	private JdbcTemplate jdbcTemplate = new JdbcTemplate();
 	@Autowired
 	private DataSource dataSource;
 
@@ -53,5 +55,11 @@ public class JdbcDaoImpl {
 			}
 		}
 
+	}
+
+	public int getCircleCount() {
+		String sql = "select count(*) from circle";
+		jdbcTemplate.setDataSource(getDataSource());
+		return jdbcTemplate.queryForObject(sql, Integer.class);
 	}
 }
