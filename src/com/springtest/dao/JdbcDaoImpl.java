@@ -1,7 +1,5 @@
 package com.springtest.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -30,35 +28,22 @@ public class JdbcDaoImpl {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
-	public Circle getCircle(int circleID) {
-		Connection conn = null;
-		try {
-			conn = dataSource.getConnection();
-			PreparedStatement ps = conn.prepareStatement("select * from circle where id=?");
-			ps.setInt(1, circleID);
-
-			Circle circle = null;
-			ResultSet rs = ps.executeQuery();
-
-			if (rs.next())
-				circle = new Circle(circleID, rs.getString("name"));
-			rs.close();
-			ps.close();
-			return circle;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			try {
-				if (conn != null)
-					conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-	}
-
+	/*
+	 * public Circle getCircle(int circleID) { Connection conn = null; try { conn =
+	 * dataSource.getConnection(); PreparedStatement ps =
+	 * conn.prepareStatement("select * from circle where id=?"); ps.setInt(1,
+	 * circleID);
+	 * 
+	 * Circle circle = null; ResultSet rs = ps.executeQuery();
+	 * 
+	 * if (rs.next()) circle = new Circle(circleID, rs.getString("name"));
+	 * rs.close(); ps.close(); return circle; } catch (Exception e) { throw new
+	 * RuntimeException(e); } finally { try { if (conn != null) conn.close(); }
+	 * catch (SQLException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); } }
+	 * 
+	 * }
+	 */
 	public int getCircleCount() {
 		String sql = "select count(*) from circle";
 		return jdbcTemplate.queryForObject(sql, Integer.class);
@@ -78,6 +63,17 @@ public class JdbcDaoImpl {
 	public List<Circle> getAllCircles() {
 		String sql = "select * from circle";
 		return jdbcTemplate.query(sql, new CircleMapper());
+	}
+
+	public void insert(Circle circle) {
+		String sql = "Insert into circle(id,name)values(?,?)";
+		jdbcTemplate.update(sql, new Object[] { circle.getId(), circle.getName() });
+
+	}
+
+	public void createTriangleTable() {
+		String sql = "create table triangle(id integer,name varchar(50))";
+		jdbcTemplate.execute(sql);
 	}
 
 	private static final class CircleMapper implements RowMapper<Circle> {
